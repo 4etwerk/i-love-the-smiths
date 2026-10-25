@@ -26,7 +26,6 @@ body{
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 
-/* ---------- Intro ---------- */
 .intro{
   position:fixed;inset:0;z-index:10;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
@@ -51,7 +50,6 @@ button{font:inherit;color:inherit;cursor:pointer}
 }
 .start:hover{background:var(--amber);color:var(--ink)}
 
-/* ---------- Title + lyrics ---------- */
 .meta{
   position:fixed;top:20px;left:24px;z-index:4;
   opacity:0;transition:opacity 1.2s;
@@ -74,7 +72,6 @@ body.started .meta{opacity:.85}
 #lyric.in{animation:lyricIn .7s cubic-bezier(.2,.8,.2,1) forwards}
 @keyframes lyricIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
-/* ---------- Rain ---------- */
 .rain{
   position:fixed;left:0;right:0;top:-160px;height:calc(100% + 160px);
   z-index:5;pointer-events:none;opacity:.55;will-change:transform;
@@ -83,7 +80,6 @@ body.started .meta{opacity:.85}
 }
 @keyframes rain{to{transform:translateY(160px)}}
 
-/* ---------- Scene ---------- */
 .scene{position:fixed;left:0;right:0;bottom:0;height:var(--scene-h);z-index:4;overflow:hidden}
 .scene:not(.driving) *{animation-play-state:paused}
 .scene>div{position:absolute;left:0;will-change:transform}
@@ -111,7 +107,6 @@ body.started .meta{opacity:.85}
 @keyframes ride{to{transform:translateX(-2400px)}}
 @keyframes ride-far{to{transform:translateX(-4800px)}}
 
-/* ---------- Bus ---------- */
 .bus{
   position:absolute;left:clamp(16px,22vw,320px);bottom:22px;
   width:clamp(250px,30vw,380px);
@@ -135,7 +130,6 @@ body.started .meta{opacity:.85}
 }
 .hint.show{opacity:.9}
 
-/* ---------- Controls ---------- */
 .controls{
   position:fixed;right:20px;bottom:20px;z-index:6;
   display:flex;align-items:center;gap:8px;
@@ -153,7 +147,6 @@ body.playing .i-play{display:none}
 body.playing .i-pause{display:block}
 #vol{width:96px;accent-color:var(--amber)}
 
-/* ---------- Small screens / reduced motion ---------- */
 @media (max-width:600px){
   :root{--scene-h:260px}
   .lyrics{padding-top:84px}
@@ -187,7 +180,7 @@ body.playing .i-pause{display:block}
 
 <div class="meta">
   <i>There Is a Light That Never Goes Out</i>
-  <span>The Smiths, 1986</span>
+  <span>The Smiths</span>
 </div>
 
 <div class="lyrics"><p id="lyric" aria-live="polite"></p></div>
@@ -258,7 +251,7 @@ body.playing .i-pause{display:block}
 </div>
 
 <script>
-const START = 28; // с какой секунды начинать трек
+const START = 28; 
 
 const LINES = [
   { time: 32, text: "take me out tonight" },
@@ -278,7 +271,6 @@ const intro = $('intro'), hint = $('hint'), vol = $('vol');
 
 let current = -1, swapTimer, boostTimer, fadeFrame, baseVolume = +vol.value;
 
-/* ---------- Строки ---------- */
 function showLine(i) {
   if (i === current) return;
   current = i;
@@ -298,7 +290,6 @@ audio.addEventListener('timeupdate', () => {
   if (t >= 31 && !hint.dataset.done) hint.classList.add('show');
 });
 
-/* ---------- Автобус: скорость и громкость ---------- */
 const setRate = r => scene.getAnimations({ subtree: true }).forEach(a => a.updatePlaybackRate(r));
 
 function fadeTo(target, ms = 700) {
@@ -326,7 +317,6 @@ bus.addEventListener('click', () => {
   }, 3500);
 });
 
-/* ---------- Плеер ---------- */
 audio.addEventListener('play', () => {
   scene.classList.add('driving');
   document.body.classList.add('playing');
@@ -342,7 +332,6 @@ function showMissing() {
   intro.classList.remove('hidden');
 }
 audio.addEventListener('error', showMissing);
-// the error may fire before this script runs
 if (audio.error || audio.networkState === 3) showMissing();
 setTimeout(() => { if (audio.error || audio.networkState === 3) showMissing(); }, 400);
 
@@ -380,7 +369,6 @@ vol.addEventListener('input', () => {
   if (!bus.classList.contains('boost')) audio.volume = baseVolume;
 });
 
-/* Не гонять анимации, пока вкладка скрыта */
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) scene.classList.remove('driving');
   else if (!audio.paused) scene.classList.add('driving');
