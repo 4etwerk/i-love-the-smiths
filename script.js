@@ -1,4 +1,4 @@
-const START = 28; // с какой секунды начинать трек
+const START = 28; 
 
 const LINES = [
   { time: 32, text: "take me out tonight" },
@@ -18,7 +18,6 @@ const intro = $('intro'), hint = $('hint'), vol = $('vol');
 
 let current = -1, swapTimer, boostTimer, fadeFrame, baseVolume = +vol.value;
 
-/* ---------- Строки ---------- */
 function showLine(i) {
   if (i === current) return;
   current = i;
@@ -38,7 +37,6 @@ audio.addEventListener('timeupdate', () => {
   if (t >= 31 && !hint.dataset.done) hint.classList.add('show');
 });
 
-/* ---------- Автобус: скорость и громкость ---------- */
 const setRate = r => scene.getAnimations({ subtree: true }).forEach(a => a.updatePlaybackRate(r));
 
 function fadeTo(target, ms = 700) {
@@ -66,7 +64,6 @@ bus.addEventListener('click', () => {
   }, 3500);
 });
 
-/* ---------- Плеер ---------- */
 audio.addEventListener('play', () => {
   scene.classList.add('driving');
   document.body.classList.add('playing');
@@ -106,7 +103,6 @@ vol.addEventListener('input', () => {
   if (!bus.classList.contains('boost')) audio.volume = baseVolume;
 });
 
-/* Не гонять анимации, пока вкладка скрыта */
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) scene.classList.remove('driving');
   else if (!audio.paused) scene.classList.add('driving');
