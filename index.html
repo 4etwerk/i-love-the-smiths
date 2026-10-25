@@ -7,7 +7,172 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Archivo+Narrow:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<style>
+:root{
+  --ink:#090b1c; --night:#1b1530; --dusk:#4a2a34;
+  --amber:#f2a93b; --cream:#f3e7d0; --muted:#b9a98c;
+  --scene-h:320px;
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{
+  overflow:hidden;
+  color:var(--cream);
+  font-family:"Archivo Narrow",sans-serif;
+  background:
+    radial-gradient(ellipse 70% 35% at 50% 100%,rgba(242,169,59,.30),transparent 70%),
+    linear-gradient(var(--ink) 0%,var(--night) 55%,var(--dusk) 100%);
+}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+
+/* ---------- Intro ---------- */
+.intro{
+  position:fixed;inset:0;z-index:10;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  padding:24px;text-align:center;
+  background:
+    radial-gradient(ellipse 70% 35% at 50% 100%,rgba(242,169,59,.30),transparent 70%),
+    linear-gradient(var(--ink),var(--night) 60%,var(--dusk));
+  transition:opacity .9s,visibility .9s;
+}
+.intro.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.intro h1{
+  font:italic 400 clamp(36px,8vw,92px)/1 "IM Fell English",serif;
+  max-width:12em;text-wrap:balance;
+  text-shadow:0 0 36px rgba(242,169,59,.35);
+}
+.intro p{color:var(--muted);font-size:17px;letter-spacing:.04em}
+.start{
+  margin-top:10px;padding:13px 44px;border-radius:999px;
+  border:1px solid var(--amber);background:transparent;color:var(--amber);
+  font-size:19px;letter-spacing:.06em;
+  transition:background .2s,color .2s;
+}
+.start:hover{background:var(--amber);color:var(--ink)}
+
+/* ---------- Title + lyrics ---------- */
+.meta{
+  position:fixed;top:20px;left:24px;z-index:4;
+  opacity:0;transition:opacity 1.2s;
+  font-size:14px;letter-spacing:.04em;line-height:1.35;
+}
+.meta i{display:block;font:italic 400 18px "IM Fell English",serif;color:var(--cream)}
+.meta span{color:var(--muted)}
+body.started .meta{opacity:.85}
+
+.lyrics{
+  position:fixed;inset:0 0 var(--scene-h) 0;z-index:3;
+  display:grid;place-items:center;padding:72px 28px 16px;text-align:center;
+}
+#lyric{
+  font:italic 400 clamp(28px,5.6vw,68px)/1.14 "IM Fell English",serif;
+  max-width:19em;text-wrap:balance;
+  opacity:0;transition:opacity .2s;
+  text-shadow:0 0 28px rgba(242,169,59,.35);
+}
+#lyric.in{animation:lyricIn .7s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes lyricIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ---------- Rain ---------- */
+.rain{
+  position:fixed;left:0;right:0;top:-160px;height:calc(100% + 160px);
+  z-index:5;pointer-events:none;opacity:.55;will-change:transform;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' stroke='%23b7c6ff' stroke-opacity='.35'%3E%3Cline x1='20' y1='10' x2='14' y2='34'/%3E%3Cline x1='70' y1='60' x2='64' y2='88'/%3E%3Cline x1='120' y1='20' x2='114' y2='46'/%3E%3Cline x1='40' y1='100' x2='34' y2='122'/%3E%3Cline x1='95' y1='110' x2='89' y2='140'/%3E%3Cline x1='145' y1='90' x2='139' y2='112'/%3E%3Cline x1='5' y1='140' x2='0' y2='158'/%3E%3C/svg%3E");
+  animation:rain .5s linear infinite;
+}
+@keyframes rain{to{transform:translateY(160px)}}
+
+/* ---------- Scene ---------- */
+.scene{position:fixed;left:0;right:0;bottom:0;height:var(--scene-h);z-index:4;overflow:hidden}
+.scene:not(.driving) *{animation-play-state:paused}
+.scene>div{position:absolute;left:0;will-change:transform}
+
+.skyline{
+  bottom:70px;height:200px;width:9600px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Cg fill='%2311142b'%3E%3Crect x='0' y='80' width='90' height='120'/%3E%3Crect x='90' y='40' width='70' height='160'/%3E%3Crect x='160' y='100' width='110' height='100'/%3E%3Crect x='270' y='20' width='60' height='180'/%3E%3Crect x='330' y='70' width='100' height='130'/%3E%3Crect x='430' y='50' width='80' height='150'/%3E%3Crect x='510' y='90' width='120' height='110'/%3E%3Crect x='630' y='30' width='70' height='170'/%3E%3Crect x='700' y='75' width='100' height='125'/%3E%3C/g%3E%3Cg fill='%23f2a93b' fill-opacity='.75'%3E%3Crect x='20' y='100' width='6' height='8'/%3E%3Crect x='50' y='130' width='6' height='8'/%3E%3Crect x='108' y='60' width='6' height='8'/%3E%3Crect x='130' y='110' width='6' height='8'/%3E%3Crect x='190' y='120' width='6' height='8'/%3E%3Crect x='240' y='150' width='6' height='8'/%3E%3Crect x='288' y='44' width='6' height='8'/%3E%3Crect x='300' y='90' width='6' height='8'/%3E%3Crect x='352' y='100' width='6' height='8'/%3E%3Crect x='400' y='140' width='6' height='8'/%3E%3Crect x='450' y='80' width='6' height='8'/%3E%3Crect x='480' y='130' width='6' height='8'/%3E%3Crect x='540' y='120' width='6' height='8'/%3E%3Crect x='600' y='150' width='6' height='8'/%3E%3Crect x='650' y='56' width='6' height='8'/%3E%3Crect x='675' y='110' width='6' height='8'/%3E%3Crect x='730' y='100' width='6' height='8'/%3E%3Crect x='770' y='140' width='6' height='8'/%3E%3C/g%3E%3C/svg%3E") 0 0/800px 200px repeat-x;
+  animation:ride-far 80s linear infinite;
+}
+.lamps{
+  bottom:66px;height:230px;width:4800px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='230'%3E%3Cdefs%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23f2a93b' stop-opacity='.5'/%3E%3Cstop offset='1' stop-color='%23f2a93b' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='84' cy='62' r='60' fill='url(%23g)'/%3E%3Crect x='58' y='64' width='5' height='166' fill='%23151220'/%3E%3Cpath d='M60 66Q62 52 84 56' stroke='%23151220' stroke-width='4' fill='none'/%3E%3Ccircle cx='84' cy='60' r='6' fill='%23ffd9a0'/%3E%3C/svg%3E") 0 0/400px 230px repeat-x;
+  animation:ride 8s linear infinite;
+}
+.road{
+  bottom:0;height:70px;width:100%;
+  background:linear-gradient(#17131f,#0b0a10);
+  border-top:2px solid #2a2230;will-change:auto;
+}
+.dashes{
+  bottom:12px;height:4px;width:4800px;
+  background:repeating-linear-gradient(90deg,#d9a24a 0 60px,transparent 60px 120px);
+  opacity:.8;animation:ride 8s linear infinite;
+}
+@keyframes ride{to{transform:translateX(-2400px)}}
+@keyframes ride-far{to{transform:translateX(-4800px)}}
+
+/* ---------- Bus ---------- */
+.bus{
+  position:absolute;left:clamp(16px,22vw,320px);bottom:22px;
+  width:clamp(250px,30vw,380px);
+  padding:0;border:0;background:none;
+  transition:transform .8s cubic-bezier(.2,.8,.2,1);
+}
+.bus svg{display:block;overflow:visible}
+.bus.boost{transform:translateX(24px)}
+.body{animation:bob .8s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-1.5px)}}
+.wheel{transform-box:fill-box;transform-origin:center;animation:spin .42s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.beam{opacity:.85;transition:opacity .4s}
+.bus.boost .beam{opacity:1}
+
+.hint{
+  position:absolute;left:50%;bottom:100%;margin-bottom:8px;
+  transform:translateX(-50%);white-space:nowrap;
+  font:italic 400 16px "IM Fell English",serif;color:var(--amber);
+  opacity:0;transition:opacity .8s;pointer-events:none;
+}
+.hint.show{opacity:.9}
+
+/* ---------- Controls ---------- */
+.controls{
+  position:fixed;right:20px;bottom:20px;z-index:6;
+  display:flex;align-items:center;gap:8px;
+}
+.controls button{
+  width:44px;height:44px;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid rgba(242,169,59,.5);background:rgba(9,11,28,.85);
+  transition:background .2s,border-color .2s;
+}
+.controls button:hover{background:rgba(242,169,59,.18);border-color:var(--amber)}
+.controls svg{width:20px;height:20px;fill:var(--amber)}
+.i-pause{display:none}
+body.playing .i-play{display:none}
+body.playing .i-pause{display:block}
+#vol{width:96px;accent-color:var(--amber)}
+
+/* ---------- Small screens / reduced motion ---------- */
+@media (max-width:600px){
+  :root{--scene-h:260px}
+  .lyrics{padding-top:84px}
+  #vol{width:64px}
+  .controls{top:12px;bottom:auto;right:12px}
+  .controls button{width:40px;height:40px}
+  .meta{max-width:48%;top:16px;left:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  .rain{display:none}
+  .body{animation:none}
+  #lyric.in{animation:none;opacity:1}
+}
+
+.pick{display:none;margin-top:6px;padding:10px 26px;border-radius:999px;border:1px dashed var(--muted);color:var(--cream);cursor:pointer;font-size:16px}
+.pick:hover{border-color:var(--amber);color:var(--amber)}
+.intro.error .pick{display:inline-block}
+
+</style>
 </head>
 <body>
 
@@ -17,6 +182,7 @@
   <h1>There Is a Light That Never Goes Out</h1>
   <p id="introNote">The Smiths, 1986</p>
   <button class="start" id="start">Play</button>
+  <label class="pick">Choose the mp3 file<input type="file" accept="audio/*" id="file" hidden></label>
 </div>
 
 <div class="meta">
@@ -91,6 +257,135 @@
   <input type="range" id="vol" min="0" max="1" step="0.01" value="0.3" aria-label="Volume">
 </div>
 
-<script src="script.js"></script>
+<script>
+const START = 28; // с какой секунды начинать трек
+
+const LINES = [
+  { time: 32, text: "take me out tonight" },
+  { time: 38, text: "because i want to see people" },
+  { time: 40, text: "and i want to see life" },
+  { time: 45, text: "driving in your car" },
+  { time: 49, text: "oh please don't drop me home" },
+  { time: 52, text: "because it's not my home, it's their home" },
+  { time: 54, text: "and i'm welcome no more" },
+  { time: 63, text: "and if a double-decker bus crashes into us" },
+  { time: 70, text: "to die by your side is such a heavenly way to die ♥♥♥" }
+];
+
+const $ = id => document.getElementById(id);
+const audio = $('audio'), lyric = $('lyric'), scene = $('scene'), bus = $('bus');
+const intro = $('intro'), hint = $('hint'), vol = $('vol');
+
+let current = -1, swapTimer, boostTimer, fadeFrame, baseVolume = +vol.value;
+
+/* ---------- Строки ---------- */
+function showLine(i) {
+  if (i === current) return;
+  current = i;
+  lyric.classList.remove('in');
+  clearTimeout(swapTimer);
+  swapTimer = setTimeout(() => {
+    lyric.textContent = i < 0 ? '' : LINES[i].text;
+    if (i >= 0) { void lyric.offsetWidth; lyric.classList.add('in'); }
+  }, 220);
+}
+
+audio.addEventListener('timeupdate', () => {
+  const t = audio.currentTime;
+  let i = -1;
+  for (let k = 0; k < LINES.length; k++) if (t >= LINES[k].time) i = k;
+  showLine(i);
+  if (t >= 31 && !hint.dataset.done) hint.classList.add('show');
+});
+
+/* ---------- Автобус: скорость и громкость ---------- */
+const setRate = r => scene.getAnimations({ subtree: true }).forEach(a => a.updatePlaybackRate(r));
+
+function fadeTo(target, ms = 700) {
+  cancelAnimationFrame(fadeFrame);
+  const from = audio.volume, t0 = performance.now();
+  (function step(now) {
+    const k = Math.min((now - t0) / ms, 1);
+    audio.volume = from + (target - from) * k;
+    if (k < 1) fadeFrame = requestAnimationFrame(step);
+  })(t0);
+}
+
+bus.addEventListener('click', () => {
+  if (audio.paused) return;
+  hint.classList.remove('show');
+  hint.dataset.done = '1';
+  bus.classList.add('boost');
+  setRate(2.2);
+  fadeTo(Math.min(baseVolume + 0.3, 1));
+  clearTimeout(boostTimer);
+  boostTimer = setTimeout(() => {
+    bus.classList.remove('boost');
+    setRate(1);
+    fadeTo(baseVolume);
+  }, 3500);
+});
+
+/* ---------- Плеер ---------- */
+audio.addEventListener('play', () => {
+  scene.classList.add('driving');
+  document.body.classList.add('playing');
+});
+['pause', 'ended'].forEach(ev => audio.addEventListener(ev, () => {
+  scene.classList.remove('driving');
+  document.body.classList.remove('playing');
+}));
+
+function showMissing() {
+  $('introNote').textContent = "Can't find the mp3 next to this page. Choose it from your computer:";
+  intro.classList.add('error');
+  intro.classList.remove('hidden');
+}
+audio.addEventListener('error', showMissing);
+// the error may fire before this script runs
+if (audio.error || audio.networkState === 3) showMissing();
+setTimeout(() => { if (audio.error || audio.networkState === 3) showMissing(); }, 400);
+
+$('file').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  audio.src = URL.createObjectURL(f);
+  intro.classList.remove('error');
+  $('introNote').textContent = f.name + " — press Play";
+});
+
+$('start').addEventListener('click', () => {
+  audio.volume = baseVolume;
+  audio.currentTime = START;
+  audio.play().then(() => {
+    document.body.classList.add('started');
+    intro.classList.add('hidden');
+  }).catch(() => {
+    if (audio.error || audio.networkState === 3) showMissing();
+    else $('introNote').textContent = "Playback was blocked — tap Play again.";
+  });
+});
+
+$('toggle').addEventListener('click', () => audio.paused ? audio.play() : audio.pause());
+
+$('restart').addEventListener('click', () => {
+  audio.currentTime = START;
+  showLine(-1);
+  hint.dataset.done = '';
+  audio.play();
+});
+
+vol.addEventListener('input', () => {
+  baseVolume = +vol.value;
+  if (!bus.classList.contains('boost')) audio.volume = baseVolume;
+});
+
+/* Не гонять анимации, пока вкладка скрыта */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) scene.classList.remove('driving');
+  else if (!audio.paused) scene.classList.add('driving');
+});
+
+</script>
 </body>
 </html>
