@@ -161,9 +161,6 @@ body.playing .i-pause{display:block}
   #lyric.in{animation:none;opacity:1}
 }
 
-.pick{display:none;margin-top:6px;padding:10px 26px;border-radius:999px;border:1px dashed var(--muted);color:var(--cream);cursor:pointer;font-size:16px}
-.pick:hover{border-color:var(--amber);color:var(--amber)}
-.intro.error .pick{display:inline-block}
 
 </style>
 </head>
@@ -175,12 +172,11 @@ body.playing .i-pause{display:block}
   <h1>There Is a Light That Never Goes Out</h1>
   <p id="introNote">The Smiths, 1986</p>
   <button class="start" id="start">Play</button>
-  <label class="pick">Choose the mp3 file<input type="file" accept="audio/*" id="file" hidden></label>
 </div>
 
 <div class="meta">
   <i>There Is a Light That Never Goes Out</i>
-  <span>The Smiths</span>
+  <span>The Smiths, 1986</span>
 </div>
 
 <div class="lyrics"><p id="lyric" aria-live="polite"></p></div>
@@ -326,33 +322,12 @@ audio.addEventListener('play', () => {
   document.body.classList.remove('playing');
 }));
 
-function showMissing() {
-  $('introNote').textContent = "Can't find the mp3 next to this page. Choose it from your computer:";
-  intro.classList.add('error');
-  intro.classList.remove('hidden');
-}
-audio.addEventListener('error', showMissing);
-if (audio.error || audio.networkState === 3) showMissing();
-setTimeout(() => { if (audio.error || audio.networkState === 3) showMissing(); }, 400);
-
-$('file').addEventListener('change', e => {
-  const f = e.target.files[0];
-  if (!f) return;
-  audio.src = URL.createObjectURL(f);
-  intro.classList.remove('error');
-  $('introNote').textContent = f.name + " — press Play";
-});
-
 $('start').addEventListener('click', () => {
   audio.volume = baseVolume;
   audio.currentTime = START;
-  audio.play().then(() => {
-    document.body.classList.add('started');
-    intro.classList.add('hidden');
-  }).catch(() => {
-    if (audio.error || audio.networkState === 3) showMissing();
-    else $('introNote').textContent = "Playback was blocked — tap Play again.";
-  });
+  document.body.classList.add('started');
+  intro.classList.add('hidden');
+  audio.play().catch(() => {});
 });
 
 $('toggle').addEventListener('click', () => audio.paused ? audio.play() : audio.pause());
